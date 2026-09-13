@@ -18,13 +18,16 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "userId")
 @Builder
+@ToString
 public class UserTwoFactorAuthEntity {
 
     @Id
     @Column(name = "user_id")
     private UUID userId;
 
+    @ToString.Exclude
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "user_id")

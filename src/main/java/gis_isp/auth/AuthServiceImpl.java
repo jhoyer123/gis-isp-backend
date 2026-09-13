@@ -4,7 +4,7 @@ import gis_isp.auth.dto.LoginRequest;
 import gis_isp.auth.dto.LoginResult;
 import gis_isp.auth.token.RefreshTokenManager;
 import gis_isp.security.jwt.JwtProvider;
-import gis_isp.exception.InvalidCredentialsException;
+import gis_isp.common.exception.InvalidCredentialsException;
 import gis_isp.user.UserEntity;
 import gis_isp.user.UserRepository;
 import lombok.RequiredArgsConstructor;

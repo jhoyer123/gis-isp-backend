@@ -1,4 +1,4 @@
-package gis_isp.exception;
+package gis_isp.common.exception;
 
 public class ResourceAlreadyExistsException extends RuntimeException {
 

@@ -12,7 +12,7 @@ CREATE TABLE audit_logs (
 
                             details JSONB,
 
-                            created_at TIMESTAMP NOT NULL DEFAULT now(),
+                            created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
                             CONSTRAINT fk_audit_logs_user
                                 FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL

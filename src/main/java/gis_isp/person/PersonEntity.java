@@ -6,27 +6,20 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.context.annotation.Bean;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(
-        name = "persons",
-        uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "uq_person_document",
-                        columnNames = {"document_type", "document_number"}
-                )
-        }
-)
+@Table(name = "persons")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "id") // indica que la entidad es unica solo por su id
-@ToString // lo trasforma a string bueno para debuguear
+@EqualsAndHashCode(of = "id")
+@ToString
 public class PersonEntity {
 
     @Id
@@ -43,11 +36,8 @@ public class PersonEntity {
     @Column(unique = true, length = 20)
     private String phone;
 
-    @Column(name = "document_type", length = 30)
-    private String documentType;
-
-    @Column(name = "document_number", length = 50)
-    private String documentNumber;
+    @Column(name = "ci", length = 20)
+    private String ci;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -57,6 +47,4 @@ public class PersonEntity {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
-    //@OneToOne(mappedBy = "person", fetch = FetchType.LAZY)
-    //private UserEntity user;
 }

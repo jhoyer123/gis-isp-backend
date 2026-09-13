@@ -16,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "code")
 @ToString
 public class PermissionEntity {
 
@@ -35,6 +35,8 @@ public class PermissionEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
+    @Builder.Default
+    @ToString.Exclude
     @ManyToMany(mappedBy = "permissions")
     private Set<RoleEntity> roles = new HashSet<>();
 

@@ -1,6 +1,6 @@
 package gis_isp.auth.token;
 
-import gis_isp.exception.InvalidTokenException;
+import gis_isp.common.exception.InvalidTokenException;
 import gis_isp.user.UserEntity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

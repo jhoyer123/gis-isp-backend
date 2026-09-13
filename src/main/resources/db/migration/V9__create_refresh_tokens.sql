@@ -9,12 +9,12 @@ CREATE TABLE refresh_tokens (
                                 user_agent TEXT,
 
     -- Session expiration
-                                expires_at          TIMESTAMP NOT NULL,
+                                expires_at TIMESTAMPTZ NOT NULL,
 
                                 revoked    BOOLEAN NOT NULL DEFAULT false,
-                                revoked_at TIMESTAMP,
+                                revoked_at TIMESTAMPTZ,
 
-                                created_at        TIMESTAMP NOT NULL DEFAULT now(),
+                                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
 
                                 CONSTRAINT fk_refresh_tokens_user
                                     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE

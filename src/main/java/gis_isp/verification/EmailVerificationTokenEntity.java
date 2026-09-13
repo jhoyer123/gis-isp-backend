@@ -15,8 +15,9 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Builder
-
+@ToString
 public class EmailVerificationTokenEntity {
 
     @Id
@@ -24,6 +25,7 @@ public class EmailVerificationTokenEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;

@@ -5,9 +5,13 @@ CREATE TABLE users (
 
                        username      VARCHAR(100) UNIQUE,
                        email         VARCHAR(255) NOT NULL UNIQUE,
-                       password_hash VARCHAR(255) NOT NULL,
+                       password_hash VARCHAR(255),
+                       must_set_password BOOLEAN NOT NULL DEFAULT true,
 
-                       status        VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+                       invited_by UUID,
+                       invited_at TIMESTAMPTZ,
+
+                       status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
 
                        email_verified BOOLEAN NOT NULL DEFAULT false,
 
@@ -28,8 +32,11 @@ CREATE TABLE users (
                        CONSTRAINT fk_users_role
                            FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE RESTRICT,
 
+                       CONSTRAINT fk_users_invited_by
+                           FOREIGN KEY (invited_by) REFERENCES users(id),
+
                        CONSTRAINT chk_users_status
-                           CHECK (status IN ('ACTIVE', 'INACTIVE', 'SUSPENDED'))
+                           CHECK (status IN ('PENDING', 'ACTIVE', 'INACTIVE', 'SUSPENDED'))
 );
 
 CREATE INDEX idx_users_email ON users (email);

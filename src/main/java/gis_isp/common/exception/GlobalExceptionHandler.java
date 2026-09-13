@@ -1,4 +1,4 @@
-package gis_isp.exception;
+package gis_isp.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

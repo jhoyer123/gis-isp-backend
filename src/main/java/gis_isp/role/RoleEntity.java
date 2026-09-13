@@ -17,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "name")
 @ToString
 public class RoleEntity {
 
@@ -28,6 +28,10 @@ public class RoleEntity {
 
     @Column(name = "name", length = 50, nullable = false, unique = true)
     private String name;
+
+    @Builder.Default
+    @Column(name = "is_system", nullable = false)
+    private boolean isSystem = false;
 
     @Column(name = "description", length = 255)
     private String description;
@@ -40,6 +44,8 @@ public class RoleEntity {
     @Column(name = "updated_at", nullable = false)
     private OffsetDateTime updatedAt;
 
+    @ToString.Exclude
+    @Builder.Default
     @ManyToMany
     @JoinTable(
             name = "role_permissions",
@@ -47,8 +53,5 @@ public class RoleEntity {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     private Set<PermissionEntity> permissions = new HashSet<>();
-
-    //@OneToMany(mappedBy = "role", fetch = FetchType.LAZY)
-    //private Set<UserEntity> users = new HashSet<>();
 
 }
