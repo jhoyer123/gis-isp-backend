@@ -95,11 +95,21 @@ public class AuthController {
         addCookie(response, REFRESH_COOKIE, "", REFRESH_PATH, 0);
     }
 
+    /**
+     para desarrollo local
+     .secure(cookieSecure)
+     .sameSite("Lax")
+
+     para producción
+     .secure(true)
+     .sameSite("None")
+     **/
+
     private void addCookie(HttpServletResponse response, String name, String value, String path, long maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .httpOnly(true)
-                .secure(cookieSecure)
-                .sameSite("Lax")
+                .secure(true)
+                .sameSite("None")
                 .path(path)
                 .maxAge(maxAge)
                 .build();
