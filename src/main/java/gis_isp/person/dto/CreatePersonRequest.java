@@ -1,6 +1,6 @@
-package gis_isp.person;
+package gis_isp.person.dto;
 
-public record PersonRequestDto(
+public record CreatePersonRequest(
 
         String firstName,
         String lastName,

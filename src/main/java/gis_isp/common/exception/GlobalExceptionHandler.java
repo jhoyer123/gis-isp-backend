@@ -51,4 +51,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(AccountLockedException.class)
+    public ResponseEntity<ErrorResponse> handleLocked(AccountLockedException ex) {
+        return ResponseEntity.status(HttpStatus.LOCKED) // 423
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
+
 }

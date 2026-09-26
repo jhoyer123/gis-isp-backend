@@ -23,6 +23,7 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
+    @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     @Column(name = "id", columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;

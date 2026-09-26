@@ -29,12 +29,12 @@ public class RoleEntity {
     @Column(name = "name", length = 50, nullable = false, unique = true)
     private String name;
 
+    @Column(name = "description", length = 255)
+    private String description;
+
     @Builder.Default
     @Column(name = "is_system", nullable = false)
     private boolean isSystem = false;
-
-    @Column(name = "description", length = 255)
-    private String description;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)

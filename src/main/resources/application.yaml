@@ -26,8 +26,17 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: false
 
-# ─── Jwt ─────────────────────────────────────
+# ─── JWT ────────────────────────────────────
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 1800000 # 30 minutos en milisegundos
-  refresh-expiration: 1209600000  # 14 días (refresh token)
+  expiration: 3600000 # 1 hora en milisegundos
+  refresh-expiration: 604800000  # 7 días (refresh token)
+
+server:
+  forward-headers-strategy: framework
+
+# ─── SECURITY ────────────────────────────────────
+security:
+  login:
+    max-attempts: 5
+    lock-duration: PT15M

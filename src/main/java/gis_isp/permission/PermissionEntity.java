@@ -25,6 +25,9 @@ public class PermissionEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
 
+    @Column(name = "name", length = 100, nullable = false, unique = true)
+    private String name;
+
     @Column(name = "code", length = 100, nullable = false, unique = true)
     private String code;
 

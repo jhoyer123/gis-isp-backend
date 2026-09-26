@@ -1,9 +1,9 @@
-package gis_isp.person;
+package gis_isp.person.dto;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public record PersonDto(
+public record PersonResponse(
 
         UUID id,
         String firstName,

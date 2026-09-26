@@ -21,6 +21,7 @@ import java.util.UUID;
 public class PasswordResetTokenEntity {
 
     @Id
+    @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;

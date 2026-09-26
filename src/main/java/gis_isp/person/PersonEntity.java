@@ -1,12 +1,10 @@
 package gis_isp.person;
 
 import jakarta.persistence.*;
-import gis_isp.user.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
-import org.springframework.context.annotation.Bean;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -23,6 +21,7 @@ import java.util.UUID;
 public class PersonEntity {
 
     @Id
+    @GeneratedValue
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     @Column(name = "id", columnDefinition = "uuid", updatable = false, nullable = false)
     private UUID id;
@@ -33,10 +32,10 @@ public class PersonEntity {
     @Column(name = "last_name", nullable = false, length = 100)
     private String lastName;
 
-    @Column(unique = true, length = 20)
+    @Column(name = "phone", length = 20)
     private String phone;
 
-    @Column(name = "ci", length = 20)
+    @Column(name = "ci", unique = true, length = 20)
     private String ci;
 
     @CreationTimestamp

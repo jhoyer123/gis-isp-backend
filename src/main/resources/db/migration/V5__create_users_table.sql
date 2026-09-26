@@ -1,5 +1,5 @@
 CREATE TABLE users (
-                       id            UUID PRIMARY KEY DEFAULT uuidv7(),
+                       id            UUID PRIMARY KEY,
                        person_id     UUID NOT NULL UNIQUE,
                        role_id       BIGINT NOT NULL,
 
@@ -11,7 +11,7 @@ CREATE TABLE users (
                        invited_by UUID,
                        invited_at TIMESTAMPTZ,
 
-                       status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+                       status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
 
                        email_verified BOOLEAN NOT NULL DEFAULT false,
 
