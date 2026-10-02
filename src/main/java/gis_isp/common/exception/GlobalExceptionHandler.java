@@ -1,6 +1,7 @@
 package gis_isp.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,8 +13,34 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AvatarUploadException.class)
+    public ResponseEntity<Map<String, String>> handleAvatarUploadException(AvatarUploadException ex) {
+
+        log.error("Error crítico al subir avatar a Supabase: {}", ex.getMessage(), ex);
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "No se pudo subir la imagen. Por favor, inténtalo de nuevo más tarde."));
+    }
+
+    @ExceptionHandler(InvalidAvatarException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidAvatarException(InvalidAvatarException ex) {
+        return ResponseEntity.status(422).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCurrentPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCurrentPasswordException(InvalidCurrentPasswordException ex) {
+        return ResponseEntity.status(422).body(new ErrorResponse(ex.getMessage()));
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex) {
+        return ResponseEntity.status(422).body(new ErrorResponse(ex.getMessage()));
+    }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
@@ -56,6 +83,5 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.LOCKED) // 423
                 .body(new ErrorResponse(ex.getMessage()));
     }
-
 
 }

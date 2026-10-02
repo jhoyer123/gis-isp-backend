@@ -30,9 +30,10 @@ public class AuthServiceImpl implements AuthService {
     private final LoginLockoutProperties lockoutProperties;
     private final LoginAttemptService loginAttemptService;
 
+    // login service
     @Override
     public LoginResult login(LoginRequest request, String ipAddress, String userAgent) {
-        UserEntity user = userRepository.findByEmail(request.email())
+        UserEntity user = userRepository.findByUsername(request.username())
                 .orElseThrow(() -> new InvalidCredentialsException("Credenciales inválidas"));
 
         assertNotLocked(user);
@@ -51,6 +52,7 @@ public class AuthServiceImpl implements AuthService {
         return buildResult(user, refresh);
     }
 
+    // verify if user is locked
     private void assertNotLocked(UserEntity user) {
         if (user.isLocked()) {
             if (user.getLockUntil() != null && user.getLockUntil().isBefore(OffsetDateTime.now())) {
@@ -61,12 +63,14 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    // verify if user is active
     private void assertActive(UserEntity user) {
         if (!UserStatus.ACTIVE.equals(user.getStatus())) {
             throw new InvalidCredentialsException("Credenciales inválidas");
         }
     }
 
+    // refreshToken service
     @Override
     public LoginResult refresh(String refreshToken, String ipAddress, String userAgent) {
         // Valída, revoca el token usado y emite uno nuevo (con detección de reutilización)
@@ -83,11 +87,13 @@ public class AuthServiceImpl implements AuthService {
         return buildResult(user, refresh);
     }
 
+    // logout service
     @Override
     public void logout(String refreshToken) {
         refreshTokenService.revoke(refreshToken);
     }
 
+    // Builds the login result object by generating a JWT access token for the user
     private LoginResult buildResult(UserEntity user, IssuedRefreshToken refresh) {
         String accessToken = jwtProvider.generateAccessToken(user);
         long refreshSeconds = Duration.between(OffsetDateTime.now(), refresh.entity().getExpiresAt()).toSeconds();

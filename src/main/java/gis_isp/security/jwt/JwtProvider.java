@@ -20,6 +20,7 @@ public class JwtProvider {
     @Getter
     private final long expirationMs;
 
+    // Creates the JWT key and sets the token expiration time
     public JwtProvider(@Value("${jwt.secret}") String secret,
                        @Value("${jwt.expiration}") long expirationMs) {
         byte[] bytes = secret.getBytes(StandardCharsets.UTF_8);
@@ -30,6 +31,7 @@ public class JwtProvider {
         this.expirationMs = expirationMs;
     }
 
+    // Creates a new access token for the user
     public String generateAccessToken(UserEntity user) {
         long now = System.currentTimeMillis();
         return Jwts.builder()
@@ -40,7 +42,7 @@ public class JwtProvider {
                 .compact();
     }
 
-    /** Lanza JwtException si el token es inválido o expiró; el filtro la captura. */
+    // Validates the token and returns its claims
     public Claims validateAndGetClaims(String token) {
         return Jwts.parser()
                 .verifyWith(key)

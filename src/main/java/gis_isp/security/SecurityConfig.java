@@ -1,8 +1,10 @@
 package gis_isp.security;
 
+import gis_isp.security.cookie.AuthCookies;
 import gis_isp.security.filter.JwtFilter;
 import gis_isp.security.jwt.JwtProvider;
 import gis_isp.user.UserRepository;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,16 +29,18 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final UserRepository userRepository;
+    private final AuthCookies authCookies;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        JwtFilter jwtFilter = new JwtFilter(jwtProvider, userRepository); // no es bean a propósito
+        JwtFilter jwtFilter = new JwtFilter(jwtProvider, userRepository, authCookies);
 
         http
                 .csrf(AbstractHttpConfigurer::disable)   // cookies SameSite=Lax + CORS restringido
                 .cors(Customizer.withDefaults())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers(
                                 "/api/auth/login",
                                 "/api/auth/refresh",

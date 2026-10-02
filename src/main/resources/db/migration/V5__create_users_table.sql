@@ -6,6 +6,7 @@ CREATE TABLE users (
                        username      VARCHAR(100) UNIQUE,
                        email         VARCHAR(255) NOT NULL UNIQUE,
                        password_hash VARCHAR(255),
+                       avatar_url     VARCHAR(255),
                        must_set_password BOOLEAN NOT NULL DEFAULT true,
 
                        invited_by UUID,

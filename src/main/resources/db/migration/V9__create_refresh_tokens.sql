@@ -4,11 +4,9 @@ CREATE TABLE refresh_tokens (
 
                                 token_hash VARCHAR(255) NOT NULL UNIQUE,
 
-    -- Session metadata
                                 ip_address VARCHAR(100),
                                 user_agent TEXT,
 
-    -- Session expiration
                                 expires_at TIMESTAMPTZ NOT NULL,
 
                                 revoked    BOOLEAN NOT NULL DEFAULT false,

@@ -1,0 +1,13 @@
+Veranet GIS
+
+[[${title}]]
+
+Hola [[${name}]],
+
+[[${message}]]
+
+[[${buttonLabel}]]: [[${actionUrl}]]
+
+Este enlace vence en [[${expiresIn}]].
+
+Si no solicitaste esto, ignora este correo.

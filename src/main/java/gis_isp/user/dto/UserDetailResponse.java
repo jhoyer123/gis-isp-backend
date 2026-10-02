@@ -6,7 +6,7 @@ import gis_isp.user.UserStatus;
 
 import java.util.UUID;
 
-public record UserAdminDetailResponse(
+public record UserDetailResponse(
         UUID id,
 
         // Data Person
@@ -18,14 +18,15 @@ public record UserAdminDetailResponse(
         // Data User
         String username,
         String email,
+        String avatarUrl,
         Long roleId,
         String roleName,
         UserStatus status,
         boolean twoFactorEnabled
 ) {
-    public static UserAdminDetailResponse from(UserEntity user) {
+    public static UserDetailResponse from(UserEntity user) {
         PersonEntity person = user.getPerson();
-        return new UserAdminDetailResponse(
+        return new UserDetailResponse(
                 user.getId(),
                 person != null ? person.getFirstName() : null,
                 person != null ? person.getLastName() : null,
@@ -33,6 +34,7 @@ public record UserAdminDetailResponse(
                 person != null ? person.getCi() : null,
                 user.getUsername(),
                 user.getEmail(),
+                user.getAvatarUrl(),
                 user.getRole().getId(),
                 user.getRole().getName(),
                 user.getStatus(),

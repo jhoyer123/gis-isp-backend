@@ -47,6 +47,9 @@ public class UserEntity {
     @Column(name = "password_hash", length = 255)
     private String passwordHash;
 
+    @Column(name = "avatar_url" , length = 255)
+    private String avatarUrl;
+
     @Builder.Default
     @Column(name = "must_set_password", nullable = false)
     private boolean mustSetPassword = true;

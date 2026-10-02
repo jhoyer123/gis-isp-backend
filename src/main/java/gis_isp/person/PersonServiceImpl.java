@@ -51,6 +51,18 @@ public class PersonServiceImpl implements PersonService {
         return personRepository.save(person);
     }
 
+    // Update Person user
+    @Override
+    public PersonEntity updatePersonUser(UUID id, String phone) {
+
+        PersonEntity person = personRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Persona no encontrada"));
+
+        person.setPhone(phone);
+
+        return personRepository.save(person);
+    }
+
     // Delete Person
     @Override
     public void deletePerson(UUID id) {

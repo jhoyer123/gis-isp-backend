@@ -5,8 +5,8 @@ spring:
   # ─── BASE DE DATOS ───────────────────────────────────────
   datasource:
     url: ${DB_URL}
-    username:  ${DB_USERNAME}
-    password:  ${DB_PASSWORD}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   # ─── JPA / HIBERNATE ─────────────────────────────────────
@@ -20,17 +20,40 @@ spring:
         format_sql: true
         default_schema: public
 
-  # ─── FLAYWAY ─────────────────────────────────────
+  # ─── Flyway ─────────────────────────────────────
   flyway:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: false
+
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:1025}
+    username: ${MAIL_USER:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${MAIL_AUTH:false}
+      mail.smtp.starttls.enable: ${MAIL_TLS:false}
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
+
+  config:
+    import: optional:file:.env[.properties]
+
+# ─── SUPABASE ─────────────────────────────────────
+supabase:
+  url: ${SUPABASE_URL}
+  service-role-key: ${SUPABASE_SERVICE_ROLE_KEY}
+  bucket-name: ${SUPABASE_BUCKET_NAME}
 
 # ─── JWT ────────────────────────────────────
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3600000 # 1 hora en milisegundos
   refresh-expiration: 604800000  # 7 días (refresh token)
+  #expiration: 300000            # 5 min (access token)
+  #refresh-expiration: 600000    # 10 min (refresh token)
 
 server:
   port: ${PORT:8080}
@@ -41,3 +64,14 @@ security:
   login:
     max-attempts: 5
     lock-duration: PT15M
+
+app:
+  mail:
+    from-address: ${MAIL_FROM_ADDRESS:no-reply@localhost}
+    from-name: ${MAIL_FROM_NAME:Veranet GIS}
+    frontend-url: ${FRONTEND_URL:http://localhost:5173}
+  security:
+    cookie:
+      secure: false          # true en producción
+      same-site: Lax         # "None" en producción (requiere secure: true)
+

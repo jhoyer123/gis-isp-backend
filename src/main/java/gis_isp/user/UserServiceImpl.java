@@ -1,20 +1,27 @@
 package gis_isp.user;
 
-import gis_isp.common.exception.ResourceAlreadyExistsException;
-import gis_isp.common.exception.ResourceNotFoundException;
+import gis_isp.common.exception.*;
 import gis_isp.permission.PermissionService;
 import gis_isp.person.PersonEntity;
 import gis_isp.person.PersonService;
 import gis_isp.person.dto.CreatePersonRequest;
+import gis_isp.person.dto.UpdateMyPersonProfileRequest;
+import gis_isp.person.dto.UpdatePersonProfileRequest;
+import gis_isp.refresh.RefreshTokenService;
 import gis_isp.role.RoleEntity;
 import gis_isp.role.RoleService;
+import gis_isp.storage.SupabaseAvatarService;
 import gis_isp.user.dto.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,11 +33,15 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
     private final PersonService personService;
     private final PermissionService permissionService;
+    private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
+    private final SupabaseAvatarService storageService;
 
     // Create user
     @Override
     @Transactional
-    public UserResponse createUser(CreateUserRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createUser(CreateUserRequest request) {
 
         // Validation user
         if (userRepository.existsByEmail(request.email()))
@@ -58,9 +69,7 @@ public class UserServiceImpl implements UserService {
                 .user(userRepository.getReferenceById(getCurrentUserId()))
                 .build();
 
-        UserEntity userSaved = userRepository.save(user);
-
-        return UserResponse.from(userSaved, personSaved);
+        userRepository.save(user);
     }
 
     // Get id user auth
@@ -71,14 +80,14 @@ public class UserServiceImpl implements UserService {
         if (authentication == null)
             throw new IllegalStateException("Usuario no autenticado");
 
-
         return (UUID) authentication.getPrincipal();
     }
 
     // Update User
     @Override
     @Transactional
-    public UserResponse updateUser(UUID id, UserAdminUpdate request) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateUser(UUID id, UserAdminUpdate request) {
 
         // validation user
         UserEntity user = userRepository.findById(id)
@@ -93,7 +102,7 @@ public class UserServiceImpl implements UserService {
         user.setRole(role);
 
         // Data person
-        PersonEntity personUpdated = personService.updatePerson(
+        personService.updatePerson(
                 user.getPerson().getId(),
                 new CreatePersonRequest(
                         request.firstName(),
@@ -103,10 +112,108 @@ public class UserServiceImpl implements UserService {
                 )
         );
 
-        UserEntity userUpdated = userRepository.save(user);
-
-        return UserResponse.from(userUpdated, personUpdated);
+        userRepository.save(user);
     }
+
+    // Get User By id
+    @Override
+    public UserDetailResponse getUserById(UUID id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        return UserDetailResponse.from(user);
+    }
+
+    // Get user me
+    @Override
+    public UserMeResponse getUserMe(UUID id) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        List<String> codes = permissionService.getPermissionsByRoleId(user.getRole().getId());
+        return UserMeResponse.from(user, codes);
+    }
+
+    // update person profile admin
+    @Override
+    public void updatePersonProfileAdmin(UUID id, UpdatePersonProfileRequest request) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        personService.updatePerson(
+                user.getPerson().getId(),
+                new CreatePersonRequest(
+                        request.firstName(),
+                        request.lastName(),
+                        request.phone(),
+                        request.ci()
+                )
+        );
+    }
+
+    // update person profile user
+    @Override
+    @Transactional
+    public void updatePersonProfileUser(UUID id, UpdateMyPersonProfileRequest request) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        personService.updatePersonUser(user.getPerson().getId(), request.phone());
+    }
+
+    // update password
+    @Override
+    @Transactional
+    public void updatePassword(UUID id, ChangePasswordRequest request) {
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        if (user.getPasswordHash() == null
+                || !passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
+            throw new InvalidCurrentPasswordException("La contraseña actual es incorrecta");
+        }
+
+        if (passwordEncoder.matches(request.newPassword(), user.getPasswordHash())) {
+            throw new BusinessException("La nueva contraseña debe ser distinta a la actual");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
+        user.setMustSetPassword(false);
+        user.setFailedAttempts(0);
+
+        refreshTokenService.revokeAllForUser(id);
+    }
+
+    // update data user profile - avatar nad username
+    @Override
+    @Transactional
+    public void updateDataUserProfile(
+            UUID id,
+            UpdateMyUserProfileRequest request
+    ) {
+
+        UserEntity user = userRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Usuario no encontrado")
+                );
+
+        if (request.username() != null) {
+            user.setUsername(request.username());
+        }
+
+        if (request.avatar() != null && !request.avatar().isEmpty()) {
+            String oldAvatarPath = user.getAvatarUrl();
+            try {
+                String newAvatarPath = storageService.uploadAvatar(request.avatar(), oldAvatarPath);
+                user.setAvatarUrl(newAvatarPath);
+            } catch (IOException e) {
+                throw new FileUploadException("Ocurrió un error al procesar el archivo del avatar en el servidor.");
+            }
+        }
+
+        userRepository.save(user);
+    }
+
+    // *** aun sin uso ******
 
     // Delete User
     @Override
@@ -133,21 +240,4 @@ public class UserServiceImpl implements UserService {
                 .toList();
     }
 
-    // Get User By id
-    @Override
-    public UserAdminDetailResponse getUserById(UUID id) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-
-        return UserAdminDetailResponse.from(user);
-    }
-
-    // Get user me
-    @Override
-    public UserMeResponse getUserMe(UUID id) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-        List<String> codes = permissionService.getPermissionsByRoleId(user.getRole().getId());
-        return UserMeResponse.from(user, codes);
-    }
 }
