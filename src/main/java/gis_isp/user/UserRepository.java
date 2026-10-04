@@ -51,4 +51,5 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
     @Query("UPDATE UserEntity u SET u.failedAttempts = 0, u.isLocked = false, u.lockUntil = null WHERE u.id = :id")
     void resetLoginAttempts(@Param("id") UUID id);
 
+    boolean existsByEmailIgnoreCase(String email);
 }

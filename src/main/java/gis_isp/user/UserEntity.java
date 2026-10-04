@@ -38,7 +38,11 @@ public class UserEntity {
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
 
-    @Column(unique = true, length = 100)
+    @Builder.Default
+    @Column(name = "is_owner", nullable = false)
+    private boolean isOwner =  false;
+
+    @Column(unique = true, length = 100, nullable = false)
     private String username;
 
     @Column(nullable = false, unique = true, length = 255)
@@ -49,10 +53,6 @@ public class UserEntity {
 
     @Column(name = "avatar_url" , length = 255)
     private String avatarUrl;
-
-    @Builder.Default
-    @Column(name = "must_set_password", nullable = false)
-    private boolean mustSetPassword = true;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)

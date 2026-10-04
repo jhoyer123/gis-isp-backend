@@ -2,12 +2,12 @@ CREATE TABLE users (
                        id            UUID PRIMARY KEY,
                        person_id     UUID NOT NULL UNIQUE,
                        role_id       BIGINT NOT NULL,
+                       is_owner      BOOLEAN NOT NULL DEFAULT FALSE,
 
-                       username      VARCHAR(100) UNIQUE,
+                       username      VARCHAR(100) NOT NULL UNIQUE,
                        email         VARCHAR(255) NOT NULL UNIQUE,
                        password_hash VARCHAR(255),
                        avatar_url     VARCHAR(255),
-                       must_set_password BOOLEAN NOT NULL DEFAULT true,
 
                        invited_by UUID,
                        invited_at TIMESTAMPTZ,

@@ -14,7 +14,6 @@ public record UserMeResponse(
         String lastName,
         String role,
         List<String> permissions,
-        boolean mustSetPassword,
         boolean twoFactorEnabled
 ) {
     public static UserMeResponse from(UserEntity user, List<String> permissionCodes) {
@@ -27,7 +26,6 @@ public record UserMeResponse(
                 user.getPerson().getLastName(),
                 user.getRole().getName(),
                 permissionCodes,
-                user.isMustSetPassword(),
                 user.isTwoFactorEnabled()
         );
     }

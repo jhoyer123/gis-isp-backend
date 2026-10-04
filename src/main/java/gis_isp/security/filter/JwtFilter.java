@@ -35,7 +35,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authCookies.extract(request, AuthCookies.ACCESS);
         if (token != null) {
             try {
-                UUID userId = UUID.fromString(jwtProvider.validateAndGetClaims(token).getSubject());
+                var claims = jwtProvider.validateAndGetClaims(token);
+                if (claims.get("purpose") != null) throw new JwtException("Token de propósito especial");
+                UUID userId = UUID.fromString(claims.getSubject());
 
                 userRepository.findByIdWithRole(userId)
                         .filter(u -> UserStatus.ACTIVE.equals(u.getStatus()))   // enum: UserStatus.ACTIVE

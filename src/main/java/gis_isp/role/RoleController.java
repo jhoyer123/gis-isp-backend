@@ -1,9 +1,13 @@
 package gis_isp.role;
 
 import gis_isp.role.dto.CreateRoleRequest;
+import gis_isp.role.dto.RoleListResponse;
 import gis_isp.role.dto.RoleResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,13 +41,22 @@ public class RoleController {
         roleService.deleteRole(id);
     }
 
+    @GetMapping
+    public PagedModel<RoleListResponse> findAllRoles(
+            @RequestParam(required = false) String search,
+            @PageableDefault(size = 10, sort = "name") Pageable pageable) {
+        return new PagedModel<>(roleService.getAllRoles(search, pageable));
+    }
+
+    //**** sin uso/// ******
+
     //Get by id veremos si se usara o no********
 
     // Get all Roles
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<RoleResponse> findAllRoles() {
-        return roleService.getAllRoles();
-    }
+    //@GetMapping
+    //@ResponseStatus(HttpStatus.OK)
+    //public List<RoleResponse> findAllRoles() {
+        //return roleService.getAllRoles();
+    //}
 
 }

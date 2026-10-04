@@ -40,6 +40,9 @@ public class UserTwoFactorAuthEntity {
     @Column(name = "backup_codes", columnDefinition = "jsonb")
     private List<String> backupCodes;
 
+    @Column(name = "last_used_step")
+    private Long lastUsedStep;
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;

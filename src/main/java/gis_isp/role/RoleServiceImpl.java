@@ -3,9 +3,13 @@ package gis_isp.role;
 import gis_isp.common.exception.ResourceAlreadyExistsException;
 import gis_isp.common.exception.ResourceNotFoundException;
 import gis_isp.role.dto.CreateRoleRequest;
+import gis_isp.role.dto.RoleListResponse;
 import gis_isp.role.dto.RoleResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -84,7 +88,7 @@ public class RoleServiceImpl implements RoleService {
                 .orElseThrow(() -> new ResourceNotFoundException("Rol no encontrado"));
     }
 
-    // Get All  Roles
+    // Get All  Roles ********** no se usa
     @Override
     public List<RoleResponse> getAllRoles() {
         return roleRepository.findAll()
@@ -95,5 +99,11 @@ public class RoleServiceImpl implements RoleService {
                         role.getDescription()
                 ))
                 .toList();
+    }
+
+    // obtener lista de roles con paginación
+    @Transactional(readOnly = true)
+    public Page<RoleListResponse> getAllRoles(String search, Pageable pageable) {
+        return roleRepository.findAllWithCounts(search == null ? "" : search.trim(), pageable);
     }
 }

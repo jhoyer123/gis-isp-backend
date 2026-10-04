@@ -1,0 +1,7 @@
+[[${title}]]
+
+Hola [[${name}]],
+
+[[${message}]]
+
+Si no reconoces esta actividad, revisa la seguridad de tu cuenta.

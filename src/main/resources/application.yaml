@@ -41,6 +41,14 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  # ─── PAGINACIÓN ─────────────────────────────────────
+  data:
+    web:
+      pageable:
+        max-page-size: 50
+        default-page-size: 10
+
+
 # ─── SUPABASE ─────────────────────────────────────
 supabase:
   url: ${SUPABASE_URL}
@@ -50,7 +58,7 @@ supabase:
 # ─── JWT ────────────────────────────────────
 jwt:
   secret: ${JWT_SECRET}
-  expiration: 3600000 # 1 hora en milisegundos
+  expiration: 3600000            # 1 hora en milisegundos
   refresh-expiration: 604800000  # 7 días (refresh token)
   #expiration: 300000            # 5 min (access token)
   #refresh-expiration: 600000    # 10 min (refresh token)
@@ -65,13 +73,19 @@ security:
     max-attempts: 5
     lock-duration: PT15M
 
+# ─── NOTIFICATIONS ────────────────────────────────────
 app:
   mail:
     from-address: ${MAIL_FROM_ADDRESS:no-reply@localhost}
     from-name: ${MAIL_FROM_NAME:Veranet GIS}
     frontend-url: ${FRONTEND_URL:http://localhost:5173}
+
   security:
     cookie:
       secure: false          # true en producción
       same-site: Lax         # "None" en producción (requiere secure: true)
 
+  twofactor:
+    issuer: Veranet
+    encryption-key: ${TWOFACTOR_ENC_KEY}   # openssl rand -base64 32
+    backup-codes-count: 10

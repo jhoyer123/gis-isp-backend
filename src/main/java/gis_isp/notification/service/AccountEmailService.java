@@ -77,4 +77,11 @@ public class AccountEmailService {
         long minutes = Math.max(1, d.toMinutes());
         return minutes + (minutes == 1 ? " minuto" : " minutos");
     }
+
+    // Informational email with no action link (security notices).
+    public void sendSecurityNotice(String to, String firstName, String subject, String message) {
+        Map<String, Object> vars = Map.of("title", subject, "name", firstName, "message", message);
+        RenderedEmail body = renderer.render("notice", vars);
+        emailSender.send(new EmailMessage(to, subject, body.html(), body.text()));
+    }
 }

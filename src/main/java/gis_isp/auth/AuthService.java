@@ -1,17 +1,22 @@
 package gis_isp.auth;
 
+import gis_isp.auth.dto.LoginOutcome;
 import gis_isp.auth.dto.LoginRequest;
 import gis_isp.auth.dto.LoginResult;
 
 public interface AuthService {
 
         // login service
-        LoginResult login(LoginRequest request, String ipAddress, String userAgent);
+        LoginOutcome login(LoginRequest request, String ipAddress, String userAgent);
+
 
         // refresh token service
         LoginResult refresh(String refreshToken, String ipAddress, String userAgent);
 
         // logout service
         void logout(String refreshToken);
+
+        // verify  two factor
+        LoginResult verifyTwoFactor(String challengeToken, String code, String ipAddress, String userAgent);
 
 }

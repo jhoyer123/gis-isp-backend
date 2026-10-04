@@ -177,7 +177,6 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
-        user.setMustSetPassword(false);
         user.setFailedAttempts(0);
 
         refreshTokenService.revokeAllForUser(id);

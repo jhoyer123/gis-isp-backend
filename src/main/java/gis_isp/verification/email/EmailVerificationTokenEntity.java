@@ -1,4 +1,4 @@
-package gis_isp.verification;
+package gis_isp.verification.email;
 
 import gis_isp.user.UserEntity;
 import jakarta.persistence.*;
